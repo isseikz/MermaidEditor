@@ -1,0 +1,36 @@
+name: Combine Source Code
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  combine-code:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Get latest commit ID
+        id: get-commit-id
+        run: echo "COMMIT_ID=$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
+
+      - name: Get repository name
+        id: get-repo-name
+        run: echo "REPO_NAME=$(echo '${{ github.repository }}' | tr '/' '_')" >> $GITHUB_OUTPUT
+
+      - name: Run combine_code.sh
+        run: ./tools/combine_code.sh
+
+      - name: Upload combined code
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ steps.get-repo-name.outputs.REPO_NAME }}_combined_code_${{ steps.get-commit-id.outputs.COMMIT_ID }}
+          path: ${{ steps.get-repo-name.outputs.REPO_NAME }}_combined_code_${{ steps.get-commit-id.outputs.COMMIT_ID }}.txt
+          if-no-files-found: error
