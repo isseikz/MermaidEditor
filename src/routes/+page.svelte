@@ -12,18 +12,13 @@
   let mermaidSvg = "";
   let accessToken = "";
   let isValidToken = false;
-  let inputText = ""; // 入力された文章を格納する変数
+  let inputText = "";
 
   onMount(() => {
-    mermaid.initialize({ startOnLoad: false });
+    mermaid.initialize({ startOnLoad: true });
+    // サイト読み込み時に、初期のコードで図を描画
     updateMermaid();
   });
-
-  $: {
-    if (code) {
-      updateMermaid();
-    }
-  }
 
   const updateMermaid = async () => {
     try {
@@ -39,11 +34,11 @@
     return `
       You are a Mermaid code generator.
       Please convert the following input into Mermaid code:
-      
+
       "${inputText}"
 
       Please ensure the output is a valid Mermaid diagram.
-      
+
       Current code:
       \`\`\`mermaid
       ${code}
@@ -54,14 +49,10 @@
   };
 
   const analyseResponse = (response: string) => {
-    // Analyse the response and update the Mermaid code
-
-    // If the response is bracketed with ```, extract the content
-    const bracketedContent = response.match(/```mermaid\n([\s\S]+)\n```/);
+    const bracketedContent = response.match(/`mermaid\n([\s\S]+)\n`/);
     if (bracketedContent) {
       response = bracketedContent[1];
     }
-
     return response;
   };
 
@@ -71,22 +62,18 @@
       return;
     }
 
-    if (!inputText) {
-      alert("Please enter some text.");
-      return;
-    }
-
     try {
-      // Gemini API を使用してトークンを検証 (仮の実装)
       const genAI = new GoogleGenerativeAI(accessToken);
       const model = genAI.getGenerativeModel({
-        model: "gemini-2.0-flash-exp",
+        model: "gemini-1.5-flash",
       });
 
       const prompt = generatePrompt(inputText, code);
       const result = await model.countTokens(prompt);
 
       result.totalTokens > 0 ? (isValidToken = true) : (isValidToken = false);
+
+      alert(`Total tokens: ${result.totalTokens}`);
     } catch (error) {
       console.error("Error verifying token:", error);
       isValidToken = false;
@@ -94,26 +81,25 @@
   };
 
   const sendToLLM = async () => {
-    if (!inputText) {
-      alert("Please enter some text.");
+    if (!accessToken) {
+      alert("Please enter access token.");
       return;
     }
 
     const prompt = generatePrompt(inputText, code);
 
     try {
-      // Gemini API を使用してトークンを検証 (仮の実装)
       const genAI = new GoogleGenerativeAI(accessToken);
       const model = genAI.getGenerativeModel({
-        model: "gemini-2.0-flash-exp",
+        model: "gemini-1.5-flash",
       });
 
-      const prompt = generatePrompt(inputText, code);
       const result = await model.generateContent(prompt);
 
       code = analyseResponse(result.response.text());
-      updateMermaid();
-      inputText = ""; // 入力フォームをクリア
+      // codeへの代入後に、強制的に再描画をトリガー
+      await updateMermaid();
+      inputText = "";
     } catch (error) {
       console.error("Error sending to LLM:", error);
     }
