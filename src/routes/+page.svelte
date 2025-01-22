@@ -136,6 +136,7 @@
     type="text"
     bind:value={accessToken}
     placeholder="Enter access token"
+    autocomplete="on"
   />
   <button on:click={countToken}>Count Token</button>
   {#if isValidToken}
