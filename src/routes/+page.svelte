@@ -19,13 +19,27 @@
     updateMermaid();
   });
 
-  const updateMermaid = async () => {
+  const validateMermaid = async (code: string) => {
     try {
-      const { svg } = await mermaid.render("mermaid-graph", code);
-      mermaidSvg = svg;
+      await mermaid.parse(code);
+      return true;
     } catch (error) {
-      console.error("Mermaid rendering error:", error);
-      mermaidSvg = "Error rendering Mermaid diagram";
+      console.error("Mermaid validation error:", error);
+      return false;
+    }
+  };
+
+  const updateMermaid = async () => {
+    if (await validateMermaid(code)) {
+      try {
+        const { svg } = await mermaid.render("mermaid-graph", code);
+        mermaidSvg = svg;
+      } catch (error) {
+        console.error("Mermaid rendering error:", error);
+        mermaidSvg = "Error rendering Mermaid diagram";
+      }
+    } else {
+      mermaidSvg = "Invalid Mermaid syntax";
     }
   };
 
@@ -156,7 +170,7 @@
 
 <main class="content">
   <div class="editor">
-    <textarea bind:value={code} />
+    <textarea bind:value={code} on:input={updateMermaid} />
   </div>
   <div class="preview">
     {@html mermaidSvg}
