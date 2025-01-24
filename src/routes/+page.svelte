@@ -147,9 +147,9 @@
 
 <header class="header">
   <input
-    type="text"
+    type="password"
     bind:value={accessToken}
-    placeholder="Enter access token"
+    placeholder="Enter access token (hidden)"
     autocomplete="on"
   />
   <button on:click={countToken}>Count Token</button>
