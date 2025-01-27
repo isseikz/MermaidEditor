@@ -1,7 +1,8 @@
 <script lang="ts">
   import { onMount } from "svelte";
   import mermaid from "mermaid";
-  import { GoogleGenerativeAI, GoogleAIFileManager } from "@google/generative-ai";
+  import { GoogleGenerativeAI } from "@google/generative-ai";
+  import { GoogleAIFileManager } from "@google/generative-ai/server";
 
   let code = `graph TD
     A[Start] --> B{Is it?}
@@ -105,7 +106,7 @@
     try {
       const genAI = new GoogleGenerativeAI(accessToken);
       const model = genAI.getGenerativeModel({
-        model: "gemini-1.5-flash",
+        model: "gemini-2.0-flash-exp",
       });
 
       const result = await model.generateContent(prompt);
@@ -176,7 +177,7 @@
       );
 
       const genAI = new GoogleGenerativeAI(accessToken);
-      const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+      const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash-exp" });
       const result = await model.generateContent([
         "Transcribe the first few sentences of this document.",
         {
@@ -203,7 +204,7 @@
     try {
       const genAI = new GoogleGenerativeAI(accessToken);
       const model = genAI.getGenerativeModel({
-        model: "gemini-1.5-flash",
+        model: "gemini-2.0-flash-exp",
       });
 
       let result;
