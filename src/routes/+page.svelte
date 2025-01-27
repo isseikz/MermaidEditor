@@ -1,7 +1,7 @@
 <script lang="ts">
   import { onMount } from "svelte";
   import mermaid from "mermaid";
-  import { GoogleGenerativeAI } from "@google/generative-ai";
+  import { GoogleGenerativeAI, GoogleAIFileManager } from "@google/generative-ai";
 
   let code = `graph TD
     A[Start] --> B{Is it?}
@@ -13,6 +13,7 @@
   let accessToken = "";
   let isValidToken = false;
   let inputText = "";
+  let attachedFile: File | null = null;
 
   onMount(() => {
     mermaid.initialize({ startOnLoad: true });
@@ -143,6 +144,100 @@
     )}&hashtags=MermaidEditor`;
     window.open(url, "_blank");
   };
+
+  const attachFile = (event: Event) => {
+    const input = event.target as HTMLInputElement;
+    if (input.files && input.files.length > 0) {
+      attachedFile = input.files[0];
+    }
+  };
+
+  const sendFileToLLM = async () => {
+    if (!accessToken) {
+      alert("Please enter access token.");
+      return;
+    }
+
+    if (!attachedFile) {
+      alert("Please attach a file.");
+      return;
+    }
+
+    const fileManager = new GoogleAIFileManager(accessToken);
+
+    try {
+      const uploadResult = await fileManager.uploadFile(attachedFile, {
+        mimeType: attachedFile.type,
+        displayName: attachedFile.name,
+      });
+
+      console.log(
+        `Uploaded file ${uploadResult.file.displayName} as: ${uploadResult.file.uri}`
+      );
+
+      const genAI = new GoogleGenerativeAI(accessToken);
+      const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+      const result = await model.generateContent([
+        "Transcribe the first few sentences of this document.",
+        {
+          fileData: {
+            fileUri: uploadResult.file.uri,
+            mimeType: uploadResult.file.mimeType,
+          },
+        },
+      ]);
+      console.log(result.response.text());
+    } catch (error) {
+      console.error("Error sending file to LLM:", error);
+    }
+  };
+
+  const sendToLLMWithOptionalFile = async () => {
+    if (!accessToken) {
+      alert("Please enter access token.");
+      return;
+    }
+
+    const prompt = generatePrompt(inputText, code);
+
+    try {
+      const genAI = new GoogleGenerativeAI(accessToken);
+      const model = genAI.getGenerativeModel({
+        model: "gemini-1.5-flash",
+      });
+
+      let result;
+      if (attachedFile) {
+        const fileManager = new GoogleAIFileManager(accessToken);
+        const uploadResult = await fileManager.uploadFile(attachedFile, {
+          mimeType: attachedFile.type,
+          displayName: attachedFile.name,
+        });
+
+        console.log(
+          `Uploaded file ${uploadResult.file.displayName} as: ${uploadResult.file.uri}`
+        );
+
+        result = await model.generateContent([
+          prompt,
+          {
+            fileData: {
+              fileUri: uploadResult.file.uri,
+              mimeType: uploadResult.file.mimeType,
+            },
+          },
+        ]);
+      } else {
+        result = await model.generateContent(prompt);
+      }
+
+      code = analyseResponse(result.response.text());
+      await updateMermaid();
+      inputText = "";
+    } catch (error) {
+      console.error("Error sending to LLM:", error);
+    }
+  };
 </script>
 
 <header class="header">
@@ -163,9 +258,12 @@
     bind:value={inputText}
     placeholder="Enter text to convert"
   />
-  <button on:click={sendToLLM}>Send to LLM</button>
+  <button on:click={sendToLLMWithOptionalFile}>Send to LLM</button>
   <button on:click={exportCode}>Export</button>
   <button on:click={shareToX}>Share to X.com</button>
+  <button on:click={() => document.getElementById('fileInput').click()}>Attach File</button>
+  <input type="file" id="fileInput" accept=".txt" style="display: none;" on:change={attachFile}>
+  <button on:click={sendFileToLLM}>Send File to LLM</button>
 </header>
 
 <main class="content">
