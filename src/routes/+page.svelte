@@ -76,6 +76,131 @@
       Output only the Mermaid code and nothing else.
     `;
 
+    prompt += `
+    ## How to write Mermaid code
+    ### Class Diagram
+
+    Mermaid is a Javascript-based diagramming and charting tool that uses Markdown-inspired text definitions and a renderer to display them in browsers.
+
+    Follow these guidelines when generating Mermaid code:
+
+    **1. Diagram Types and Syntax:**
+
+    *   **Flowchart:**  Use nodes (shapes) and edges (arrows) to represent steps and flow in a process. Refer to: [Mermaid Flowchart Syntax](https://mermaid.js.org/syntax/flowchart.html)
+        *   Nodes shapes: square, circle, stadium, subroutine, cylinder, ellipse, diamond, hexagon, parallelogram, trapezoid, double circle
+        *   Edge types: arrows (-->), open arrows (---), dotted arrows (.->), thick arrows (==>), line styles (e.g., \`style id fill:#f9f,stroke:#333,stroke-width:2px\`)
+        *   Subgraphs: \`subgraph title ... end\`
+        *   Direction: \`direction LR/RL/TB/BT\`
+
+    *   **Sequence Diagram:** Illustrate interactions between actors in a time-based sequence. Refer to: [Mermaid Sequence Diagram Syntax](https://mermaid.js.org/syntax/sequenceDiagram.html)
+        *   Participants: \`participant\`, \`actor\`
+        *   Messages: \`->\` (solid arrow), \`-->\` (dashed arrow), \`-x\` (solid cross), \`--x\` (dashed cross), \`->>\` (solid open arrow), \`-->>\` (dashed open arrow), \`o->\` (solid circle), \`o-->\` (dashed circle)
+        *   Activations: \`activate\`, \`deactivate\`
+        *   Notes: \`Note left of/right of/over participant: text\`
+        *   Loops: \`loop text ... end\`
+        *   Alts/Options: \`alt text ... else text ... end\`, \`opt text ... end\`
+        *   Parallel: \`par ... and ... end\`
+
+    *   **Class Diagram:**  Describe the structure of classes, their attributes, and methods, and relationships between classes. Refer to: [Mermaid Class Diagram Syntax](https://mermaid.js.org/syntax/classDiagram.html)
+        *   Classes: \`class ClassName\`
+        *   Properties/Attributes: inside class definition
+        *   Methods/Operations: inside class definition with parentheses \`()\`
+        *   Relationships:
+            *   Association: \`--\`
+            *   Directed Association: \`-->\`
+            *   Aggregation: \`o--\`
+            *   Composition: \`*--\`
+            *   Dependency: \`..>\`
+            *   Inheritance/Generalization: \`--|>\`
+            *   Realization/Interface: \`..|>\`
+        *   Annotations: \`<<Interface>>\`, \`<<enumeration>>\`
+
+    *   **State Diagram:** Model the states of a system, transitions between states, and events that trigger transitions. Refer to: [Mermaid State Diagram Syntax](https://mermaid.js.org/syntax/stateDiagram.html)
+        *   States: \`state StateName\`
+        *   Transitions: \`State1 --> State2 : event\`
+        *   State Types:
+            *   Initial state: \`[*] --> State\`
+            *   Final state: \`State --> [*]\`
+            *   Composite states: \`state CompositeState { ... }\`
+            *   Fork/Join: \`[*] --> State1 & State2\`, \`State1 & State2 --> [*]\`
+        *   Notes: \`note left of/right of/over State: text\`
+
+    *   **Entity Relationship Diagram (ERD):**  Represent the logical structure of data in a system, showing entities and relationships between them. Refer to: [Mermaid Entity Relationship Diagram Syntax](https://mermaid.js.org/syntax/entityRelationshipDiagram.html)
+        *   Entities: \`entity "Entity Name" { ... }\`
+        *   Attributes: inside entity definition
+        *   Data Types: specify after attribute name (e.g., \`attributeName : datatype\`)
+        *   Keys: \`*attributeName\` (primary key), \`+attributeName\` (foreign key)
+        *   Relationships:
+            *   Identification: \`--|o\` (identifying), \`--||\` (non-identifying)
+            *   Cardinality: \`}\` (one or zero), \`|\` (exactly one), \`o{\` (zero or more), \`}{\` (one or more)
+            *   Relationship labels: \`<label>\` in the middle of relationship syntax
+
+    *   **User Journey Diagram:** Visualize steps a user takes to achieve a goal, highlighting touchpoints and actions. Refer to: [Mermaid User Journey Syntax](https://mermaid.js.org/syntax/userJourney.html)
+        *   Sections: \`section Section Title\`
+        *   Tasks: \`task taskName : taskStatus, taskDuration\`
+        *   Task Statuses: \`active\`, \`done\`, \`crit\`
+        *   Actor lane: \`actor ActorName\`
+
+    *   **Requirement Diagram:**  Capture different types of requirements and their relationships. Refer to: [Mermaid Requirement Diagram Syntax](https://mermaid.js.org/syntax/requirementDiagram.html)
+        *   Requirement Types: \`requirementType requirementId [requirementText]\` (e.g.,\`req SysReq-123 "The system shall..."\`)
+        *   Requirement Types: \`req\`, \`sysReq\`, \`functionalReq\`,\`interfaceReq\`,\`perfReq\`,\`designReq\`,\`testReq\`,\`useCase\`
+        *   Relationships:
+            *  \`contains\`:\`-.-\`
+            *  \`copies\`:\`.->\`
+            *  \`derives\`:\`..>\`
+            *  \`satisfies\`:\`-->\`
+            *  \`verifies\`:\`-o\`
+            *  \`refines\`:\`-.->\`
+            *  \`tracks\`:\`-.x\`
+
+    *   **Mindmap Diagram:** Hierarchical diagram to represent thoughts, ideas, or information branching out from a central topic. Refer to: [Mermaid Mindmap Syntax](https://mermaid.js.org/syntax/mindmap.html)
+        *   Central Node:\`root\`
+        *   Sub-nodes: indentation with tabs or spaces
+        *   Node Modifiers:  styling using prefixes like\`*\`,\`**\`,\`***\`,\`id(optional class)\`
+
+    *   **ZenUML Diagram:**  Simplified syntax for sequence diagrams, focusing on readability. Refer to: [Mermaid ZenUML Syntax](https://mermaid.js.org/syntax/zenuml.html)
+        *   Participants:\`participant\`,\`actor\`
+        *   Messages:\`->\` (solid arrow),\`-->\` (dashed arrow),\`<-\` (return solid arrow),\`<--\` (return dashed arrow)
+        *   Group:\`group text ... end\`
+        *   Note:\`note participant: text\`
+
+
+    **2. General Formatting:**
+
+    *   Start with \`graph\` or \`sequenceDiagram\`, \`classDiagram\`, \`stateDiagram\`,  \`erDiagram\`, \`journey\`, \`requirementDiagram\`, \`mindmap\`, or \`zenuml\` depending on the diagram type.
+    *   Use clear and descriptive labels for nodes, edges, participants, classes, states, entities, etc.
+    *   Maintain consistent indentation for readability, especially in subgraphs, loops, and composite states.
+    *   Adhere to specific syntax rules for each diagram type as outlined in the documentation.
+    *   For complex diagrams, break them down into smaller, manageable parts.
+    *   Comment lines start with \`%%\`.
+
+    **3. User Request Interpretation:**
+
+    *   Understand the user's desired diagram type and purpose. If unclear, assume flowchart as a default or ask for clarification.
+    *   Identify the key elements to be represented in the diagram (e.g., steps in a process, classes and relationships, states and transitions).
+    *   Extract relevant labels, names, and descriptions from the user request.
+
+    **4. Output:**
+
+    *   Provide the Mermaid code block directly.
+    *   Do not include explanations or surrounding text unless specifically requested.
+    *   Ensure the generated code is valid Mermaid syntax and logically represents the user's request.
+
+    **Example Request:**
+
+    > "Create a flowchart for making coffee. Steps: Boil water, Add coffee grounds, Pour water, Wait, Enjoy."
+
+    **Example Mermaid Output:**
+
+    \`\`\`mermaid
+    graph LR
+        A[Boil water] --> B(Add coffee grounds)
+        B --> C{Pour water}
+        C --> D[Wait]
+        D --> E((Enjoy));
+      \`\`\`
+    `;
+
     return prompt;
   };
 
