@@ -199,8 +199,21 @@
         C --> D[Wait]
         D --> E((Enjoy));
       \`\`\`
-    `;
+    
 
+    \`\`\`mermaid
+    classDiagram
+      class ClassA {
+          +String propertyA
+          +methodA()
+      }
+      class InterfaceB {
+          <<interface>>
+          +methodB()
+      }
+      ClassA ..|> InterfaceB 
+    \`\`\`
+    `;
     return prompt;
   };
 
