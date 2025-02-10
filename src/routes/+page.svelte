@@ -116,10 +116,15 @@
             *   Inheritance/Generalization: \`--|>\`
             *   Realization/Interface: \`..|>\`
         *   Annotations: \`<<Interface>>\`, \`<<enumeration>>\`
-    
-    Examples:
-    OK case
-    * Use \`class\` to define classes and \`<<interface>>\` annotations in closures for interfaces.
+
+    ##### **Annotations in class diagram:**
+    Define a set of named constants. Refer to: [Mermaid Enum Syntax](https://mermaid.js.org/syntax/classDiagram.html#annotations-on-classes)
+
+    ** Examples**
+
+    ** OK case **
+
+    * Use \`class\` to define classes, and \`<<interface>>\` annotations in closures to define interfaces.
     \`\`\`mermaid
     classDiagram
       class ClassA {
@@ -129,6 +134,13 @@
       class InterfaceB {
           <<interface>>
           +methodB()
+      }
+      class EnumeratesA {
+          <<enumeration>>
+          +MouseLeft
+          +MouseMiddle
+          +MouseRight
+          +Touch
       }
       ClassA ..|> InterfaceB 
     \`\`\`
@@ -143,8 +155,14 @@
           +String propertyA
           +methodA()
       }
-      interface InterfaceB {
+      interface InterfaceB { // ERROR: Use <<interface>> annotation in closures
           +methodB()
+      }
+      enumerates EnumeratesA { // ERROR: Use <<enumeration>> annotation in closures
+          LEFT
+          RIGHT
+          TOP
+          BOTTOM
       }
       ClassA ..|> InterfaceB
     \`\`\`
