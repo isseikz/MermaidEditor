@@ -399,6 +399,10 @@
         const prompt = generateDiagramPrompt(inputText, code);
         await sendToLLM(prompt);
       }
+
+      // Call reviseMermaidCodePrompt after generating the diagram
+      const revisePrompt = reviseMermaidCodePrompt(code);
+      await sendToLLM(revisePrompt);
     } catch (error) {
       console.error("Error sending to LLM:", error);
     } finally {
