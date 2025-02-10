@@ -16,7 +16,7 @@
   let attachedFile: File | null = null;
   let isProcessing = false;
 
-  const MODEL_NAME = "gemini-2.0-flash-thinking-exp-01-21";
+  const MODEL_NAME = "gemini-2.0-pro-exp-02-05";
 
   onMount(() => {
     mermaid.initialize({ startOnLoad: true });
